@@ -1,0 +1,13 @@
+{
+  "name": "danceCamServer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/macnub/danceCamServer.git",
+  "author": "Dan Thareja <danthareja@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "graphql": "0.13",
+    "graphql-yoga": "^1.16.2",
+    "prisma-client-lib": "^0.2.58"
+  }
+}
