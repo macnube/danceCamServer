@@ -1,0 +1,49 @@
+type Query {
+  session(id: ID!): Session
+}
+
+type Mutation {
+  createSession(data: SessionCreateInput!): Session
+}
+
+type Segment {
+  id: ID!
+  name: String!
+  videoId: String!
+  startTime: Int!
+  endTime: Int!
+  session: Session!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Session {
+  id: ID!
+  name: String!
+  description: String!
+  segments: [Segment!]
+  createdAt: String!
+  updatedAt: String!
+}
+
+input SessionCreateInput {
+  name: String
+  description: String
+  segments: SegmentCreateManyWithoutSessionInput
+}
+
+input SegmentCreateManyWithoutSessionInput {
+  create: [SegmentCreateWithoutSessionInput!]
+  connect: [SegmentWhereUniqueInput!]
+}
+
+input SegmentCreateWithoutSessionInput {
+  name: String!
+  videoId: String!
+  startTime: Int!
+  endTime: Int!
+}
+
+input SegmentWhereUniqueInput {
+  id: ID
+}

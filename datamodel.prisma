@@ -1,0 +1,24 @@
+# Prisma manages the following read-only fields:
+#   id
+#   createdAt
+#   updatedAt
+
+type Session {
+  id: ID! @unique
+  name: String! @default(value: "New Session")
+  description: String! @default(value: "A nondescript dance session")
+  segments: [Segment!]! @relation(name: "SegmentsBySession", onDelete: CASCADE)
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Segment {
+  id: ID! @unique
+  name: String!
+  videoId: String!
+  startTime: Int!
+  endTime: Int!
+  session: Session! @relation(name: "SegmentsBySession")
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
