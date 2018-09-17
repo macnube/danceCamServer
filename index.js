@@ -38,6 +38,9 @@ const resolvers = {
     async session(root, args, context) {
       return context.prisma.session({ id: args.id }).$fragment(SessionWithSegmentRelationFragment);
     },
+    async sessions(root, args, context) {
+      return context.prisma.sessions().$fragment(SessionWithSegmentRelationFragment);
+    }
   },
   Mutation: {
     async createSession(root, args, context) {
