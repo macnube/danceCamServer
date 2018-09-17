@@ -2,9 +2,6 @@
 #   $ docker-compose up -d
 #   $ prisma deploy -e .env
 
-# To deploy to prod:
-#   $ prisma deploy -e .env.prod
-
 endpoint: ${env:PRISMA_ENDPOINT}
 datamodel: ./prisma/datamodel.prisma
 
@@ -16,4 +13,4 @@ generate:
 
 hooks:
   post-deploy:
-    - prisma generate
+    - npx prisma generate

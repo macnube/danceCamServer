@@ -52,10 +52,12 @@ const server = new ApolloServer({
   context: { 
     prisma
   },
+  introspection: true
 })
 
 
 server.listen({ port: process.env.PORT || 4000 })
   .then(({ url }) => {
     console.log(`🚀  Server ready at ${url}`);
+    console.log(`🚀  Prisma ready at ${process.env.PRISMA_ENDPOINT}`);
   })
