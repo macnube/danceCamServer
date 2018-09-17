@@ -6,8 +6,8 @@
   "author": "Dan Thareja <danthareja@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "apollo-server": "^2.0.8",
     "graphql": "0.13",
-    "graphql-yoga": "^1.16.2",
     "prisma-client-lib": "^0.2.58"
   }
 }

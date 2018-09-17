@@ -1,10 +1,12 @@
+const fs = require('fs')
 const { prisma } = require('./prisma-client')
-const { GraphQLServer } = require('graphql-yoga')
+const { ApolloServer, gql } = require('apollo-server');
 
 const resolvers = {
   Query: {
     async session(root, args, context) {
-      return context.prisma.sessions({ where: { id: args.id } })
+      const sessions = await context.prisma.sessions({ where: { id: args.id } });
+      return sessions[0];
     },
   },
   Mutation: {
@@ -86,8 +88,8 @@ const resolvers = {
     //   }
     // }
     //
-    // Until this is addressed in Prisma, do not expect nested 
-    // inside of the mutation's response
+    // Until this is addressed in Prisma, do not query
+    // created object's fields in the mutation's response
 
     async createSession(root, args, context) {
       return context.prisma.createSession(args.data);
@@ -95,8 +97,8 @@ const resolvers = {
   },
 }
 
-const server = new GraphQLServer({
-  typeDefs: './schema.graphql',
+const server = new ApolloServer({
+  typeDefs: gql(fs.readFileSync('./schema.graphql', 'utf8')),
   resolvers,
   context: { 
     prisma
@@ -104,4 +106,11 @@ const server = new GraphQLServer({
 })
 
 
-server.start(() => console.log('Server is running on http://localhost:4000'))
+server.listen()
+  .then(({ url }) => {
+    console.log(`🚀  Server ready at ${url}`);
+  })
+  .catch(e => {
+    console.error(e)
+    process.exit(1)
+  });
