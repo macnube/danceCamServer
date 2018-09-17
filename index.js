@@ -1,5 +1,9 @@
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
 const fs = require('fs')
-const { prisma } = require('./prisma-client')
+const { prisma } = require('./prisma/client')
 const { ApolloServer, gql } = require('apollo-server');
 
 const resolvers = {
@@ -106,11 +110,7 @@ const server = new ApolloServer({
 })
 
 
-server.listen()
+server.listen({ port: process.env.PORT || 4000 })
   .then(({ url }) => {
     console.log(`🚀  Server ready at ${url}`);
   })
-  .catch(e => {
-    console.error(e)
-    process.exit(1)
-  });
