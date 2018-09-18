@@ -1,107 +1,66 @@
-const { prisma } = require('./prisma-client')
-const { GraphQLServer } = require('graphql-yoga')
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
+const fs = require('fs')
+const { prisma } = require('./prisma/client')
+const { ApolloServer, gql } = require('apollo-server');
+
+// With Prisma Client Beta 1.17,
+// The generated Prisma Client v1.17 does not return relationship data by default, only scalar data.
+// In order to query relationships, we must use the $fragment method
+
+// This seems unnecessarily verbose, because Prisma already understand this relationship
+// I've asked this question in the following issue:
+//   https://github.com/prisma/prisma/issues/3104
+
+const SessionWithSegmentRelationFragment = `
+  fragment SessionWithSegmentRelation on Session {
+    id
+    name
+    description
+    createdAt
+    updatedAt
+    segments {
+      id
+      name
+      videoId
+      startTime
+      endTime
+      createdAt
+      updatedAt
+    }
+  }
+`
 
 const resolvers = {
   Query: {
     async session(root, args, context) {
-      return context.prisma.sessions({ where: { id: args.id } })
+      return context.prisma.session({ id: args.id }).$fragment(SessionWithSegmentRelationFragment);
     },
+    async sessions(root, args, context) {
+      return context.prisma.sessions().$fragment(SessionWithSegmentRelationFragment);
+    }
   },
   Mutation: {
-    // As of 2016-09-16, there is some unexpected behavior 
-    // when nesting object writes through Prisma's Javascript client
-    // 
-    // The expected behavior is that prisma.createSession will resolve
-    // with any nested objects that were writen in the mutation.
-    //
-    // The actual behavior is that nested objects return as null.
-    //
-    // For example, consider the following mutation
-    //
-    // mutation CreateSession($data:SessionCreateInput!){
-    //   createSession(data:$data){
-    //     id
-    //     name
-    //     description
-    //     createdAt
-    //     updatedAt
-    //     segments{
-    //       id
-    //       name
-    //     }
-    //   }
-    // }
-    // 
-    // {
-    //   "data": {
-    //     "name": "Test Session",
-    //     "description": "Test Description",
-    //     "segments": {
-    //       "create":[
-    //         {
-    //           "name":"Test segment",
-    //           "videoId":"1234",
-    //           "startTime":12,
-    //           "endTime":15
-    //         }
-    //       ]
-    //     }
-    //   }
-    // }
-    // 
-    // When passed directly to Prisma's GraphQL playground,
-    // we receive the following response:
-    // 
-    // {
-    //   "data": {
-    //     "createSession": {
-    //       "name": "Test Session",
-    //       "updatedAt": "2018-09-16T12:26:54.591Z",
-    //       "description": "Test Description",
-    //       "id": "cjm4u4z5g00bz07759rjagipi",
-    //       "segments": [
-    //         {
-    //           "id": "cjm4u4z5v00c00775pdp6sf4u",
-    //           "name": "Test segment"
-    //         }
-    //       ],
-    //       "createdAt": "2018-09-16T12:26:54.591Z"
-    //     }
-    //   }
-    // }
-    // 
-    // However, when the same data is passed through createSession,
-    // we receive this response:
-    // 
-    // {
-    //   "data": {
-    //     "createSession": {
-    //       "id": "cjm4u6eqy00c40775fjlvorm3",
-    //       "name": "Test Session",
-    //       "description": "Test Description",
-    //       "createdAt": "2018-09-16T12:28:01.453Z",
-    //       "updatedAt": "2018-09-16T12:28:01.453Z",
-    //       "segments": null
-    //     }
-    //   }
-    // }
-    //
-    // Until this is addressed in Prisma, do not expect nested 
-    // inside of the mutation's response
-
     async createSession(root, args, context) {
-      return context.prisma.createSession(args.data);
+      return context.prisma.createSession(args.data).$fragment(SessionWithSegmentRelationFragment)
     },
   },
 }
 
-const server = new GraphQLServer({
-  typeDefs: './schema.graphql',
+const server = new ApolloServer({
+  typeDefs: gql(fs.readFileSync('./schema.graphql', 'utf8')),
   resolvers,
   context: { 
     prisma
   },
+  introspection: true
 })
 
 
-server.start(() => console.log('Server is running on http://localhost:4000'))
+server.listen({ port: process.env.PORT || 4000 })
+  .then(({ url }) => {
+    console.log(`🚀  Server ready at ${url}`);
+    console.log(`🚀  Prisma ready at ${process.env.PRISMA_ENDPOINT}`);
+  })

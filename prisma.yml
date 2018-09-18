@@ -1,5 +1,16 @@
-endpoint: http://localhost:4466
-datamodel: datamodel.prisma
+# To deploy to dev:
+#   $ docker-compose up -d
+#   $ prisma deploy -e .env
+
+endpoint: ${env:PRISMA_ENDPOINT}
+datamodel: ./prisma/datamodel.prisma
+
 generate:
   - generator: javascript-client
-    output: ./prisma-client/
+    output: ./prisma/client
+  - generator: graphql-schema
+    output: ./prisma
+
+hooks:
+  post-deploy:
+    - npx prisma generate
