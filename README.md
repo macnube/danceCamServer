@@ -11,11 +11,12 @@ npm install -g prisma@beta
 npm install
 ```
 
-Start prisma server locally
+Start prisma server locally and deploy schema
 
 ```
 cd prisma
 docker-compose up -d
+prisma deploy
 ```
 
 Start node server locally
