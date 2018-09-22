@@ -12,7 +12,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "heroku-postbuild": "prisma deploy --force"
+    "heroku-postbuild": "prisma deploy"
   },
   "dependencies": {
     "apollo-server": "^2.0.8",
