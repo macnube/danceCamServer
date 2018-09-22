@@ -74,3 +74,4 @@ typings/
 
 # Prisma
 prisma/client
+prisma/prisma.graphql
