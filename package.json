@@ -12,11 +12,12 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "heroku-postbuild": "prisma deploy"
+    "heroku-postbuild": "prisma deploy --force"
   },
   "dependencies": {
     "apollo-server": "^2.0.8",
     "graphql": "0.13",
+    "graphql-import": "^0.7.1",
     "prisma-client-lib": "^0.2.58"
   },
   "devDependencies": {

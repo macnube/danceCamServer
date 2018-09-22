@@ -3,10 +3,6 @@ module.exports = {
   count: Int!
 }
 
-type AggregateSession {
-  count: Int!
-}
-
 type BatchPayload {
   count: Long!
 }
@@ -16,12 +12,6 @@ scalar DateTime
 scalar Long
 
 type Mutation {
-  createSession(data: SessionCreateInput!): Session!
-  updateSession(data: SessionUpdateInput!, where: SessionWhereUniqueInput!): Session
-  updateManySessions(data: SessionUpdateInput!, where: SessionWhereInput): BatchPayload!
-  upsertSession(where: SessionWhereUniqueInput!, create: SessionCreateInput!, update: SessionUpdateInput!): Session!
-  deleteSession(where: SessionWhereUniqueInput!): Session
-  deleteManySessions(where: SessionWhereInput): BatchPayload!
   createSegment(data: SegmentCreateInput!): Segment!
   updateSegment(data: SegmentUpdateInput!, where: SegmentWhereUniqueInput!): Segment
   updateManySegments(data: SegmentUpdateInput!, where: SegmentWhereInput): BatchPayload!
@@ -48,9 +38,6 @@ type PageInfo {
 }
 
 type Query {
-  session(where: SessionWhereUniqueInput!): Session
-  sessions(where: SessionWhereInput, orderBy: SessionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Session]!
-  sessionsConnection(where: SessionWhereInput, orderBy: SessionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SessionConnection!
   segment(where: SegmentWhereUniqueInput!): Segment
   segments(where: SegmentWhereInput, orderBy: SegmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Segment]!
   segmentsConnection(where: SegmentWhereInput, orderBy: SegmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SegmentConnection!
@@ -63,7 +50,9 @@ type Segment {
   videoId: String!
   startTime: Int!
   endTime: Int!
-  session: Session!
+  mastery: Int
+  category: String
+  tags: [String!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -79,19 +68,13 @@ input SegmentCreateInput {
   videoId: String!
   startTime: Int!
   endTime: Int!
-  session: SessionCreateOneWithoutSegmentsInput!
+  mastery: Int
+  category: String
+  tags: SegmentCreatetagsInput
 }
 
-input SegmentCreateManyWithoutSessionInput {
-  create: [SegmentCreateWithoutSessionInput!]
-  connect: [SegmentWhereUniqueInput!]
-}
-
-input SegmentCreateWithoutSessionInput {
-  name: String!
-  videoId: String!
-  startTime: Int!
-  endTime: Int!
+input SegmentCreatetagsInput {
+  set: [String!]
 }
 
 type SegmentEdge {
@@ -110,6 +93,10 @@ enum SegmentOrderByInput {
   startTime_DESC
   endTime_ASC
   endTime_DESC
+  mastery_ASC
+  mastery_DESC
+  category_ASC
+  category_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -122,6 +109,9 @@ type SegmentPreviousValues {
   videoId: String!
   startTime: Int!
   endTime: Int!
+  mastery: Int
+  category: String
+  tags: [String!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -149,34 +139,13 @@ input SegmentUpdateInput {
   videoId: String
   startTime: Int
   endTime: Int
-  session: SessionUpdateOneWithoutSegmentsInput
+  mastery: Int
+  category: String
+  tags: SegmentUpdatetagsInput
 }
 
-input SegmentUpdateManyWithoutSessionInput {
-  create: [SegmentCreateWithoutSessionInput!]
-  delete: [SegmentWhereUniqueInput!]
-  connect: [SegmentWhereUniqueInput!]
-  disconnect: [SegmentWhereUniqueInput!]
-  update: [SegmentUpdateWithWhereUniqueWithoutSessionInput!]
-  upsert: [SegmentUpsertWithWhereUniqueWithoutSessionInput!]
-}
-
-input SegmentUpdateWithoutSessionDataInput {
-  name: String
-  videoId: String
-  startTime: Int
-  endTime: Int
-}
-
-input SegmentUpdateWithWhereUniqueWithoutSessionInput {
-  where: SegmentWhereUniqueInput!
-  data: SegmentUpdateWithoutSessionDataInput!
-}
-
-input SegmentUpsertWithWhereUniqueWithoutSessionInput {
-  where: SegmentWhereUniqueInput!
-  update: SegmentUpdateWithoutSessionDataInput!
-  create: SegmentCreateWithoutSessionInput!
+input SegmentUpdatetagsInput {
+  set: [String!]
 }
 
 input SegmentWhereInput {
@@ -238,7 +207,28 @@ input SegmentWhereInput {
   endTime_lte: Int
   endTime_gt: Int
   endTime_gte: Int
-  session: SessionWhereInput
+  mastery: Int
+  mastery_not: Int
+  mastery_in: [Int!]
+  mastery_not_in: [Int!]
+  mastery_lt: Int
+  mastery_lte: Int
+  mastery_gt: Int
+  mastery_gte: Int
+  category: String
+  category_not: String
+  category_in: [String!]
+  category_not_in: [String!]
+  category_lt: String
+  category_lte: String
+  category_gt: String
+  category_gte: String
+  category_contains: String
+  category_not_contains: String
+  category_starts_with: String
+  category_not_starts_with: String
+  category_ends_with: String
+  category_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -264,178 +254,7 @@ input SegmentWhereUniqueInput {
   id: ID
 }
 
-type Session {
-  id: ID!
-  name: String!
-  description: String!
-  segments(where: SegmentWhereInput, orderBy: SegmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Segment!]
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type SessionConnection {
-  pageInfo: PageInfo!
-  edges: [SessionEdge]!
-  aggregate: AggregateSession!
-}
-
-input SessionCreateInput {
-  name: String
-  description: String
-  segments: SegmentCreateManyWithoutSessionInput
-}
-
-input SessionCreateOneWithoutSegmentsInput {
-  create: SessionCreateWithoutSegmentsInput
-  connect: SessionWhereUniqueInput
-}
-
-input SessionCreateWithoutSegmentsInput {
-  name: String
-  description: String
-}
-
-type SessionEdge {
-  node: Session!
-  cursor: String!
-}
-
-enum SessionOrderByInput {
-  id_ASC
-  id_DESC
-  name_ASC
-  name_DESC
-  description_ASC
-  description_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type SessionPreviousValues {
-  id: ID!
-  name: String!
-  description: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type SessionSubscriptionPayload {
-  mutation: MutationType!
-  node: Session
-  updatedFields: [String!]
-  previousValues: SessionPreviousValues
-}
-
-input SessionSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: SessionWhereInput
-  AND: [SessionSubscriptionWhereInput!]
-  OR: [SessionSubscriptionWhereInput!]
-  NOT: [SessionSubscriptionWhereInput!]
-}
-
-input SessionUpdateInput {
-  name: String
-  description: String
-  segments: SegmentUpdateManyWithoutSessionInput
-}
-
-input SessionUpdateOneWithoutSegmentsInput {
-  create: SessionCreateWithoutSegmentsInput
-  update: SessionUpdateWithoutSegmentsDataInput
-  upsert: SessionUpsertWithoutSegmentsInput
-  delete: Boolean
-  connect: SessionWhereUniqueInput
-}
-
-input SessionUpdateWithoutSegmentsDataInput {
-  name: String
-  description: String
-}
-
-input SessionUpsertWithoutSegmentsInput {
-  update: SessionUpdateWithoutSegmentsDataInput!
-  create: SessionCreateWithoutSegmentsInput!
-}
-
-input SessionWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
-  description: String
-  description_not: String
-  description_in: [String!]
-  description_not_in: [String!]
-  description_lt: String
-  description_lte: String
-  description_gt: String
-  description_gte: String
-  description_contains: String
-  description_not_contains: String
-  description_starts_with: String
-  description_not_starts_with: String
-  description_ends_with: String
-  description_not_ends_with: String
-  segments_every: SegmentWhereInput
-  segments_some: SegmentWhereInput
-  segments_none: SegmentWhereInput
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-  updatedAt_not: DateTime
-  updatedAt_in: [DateTime!]
-  updatedAt_not_in: [DateTime!]
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
-  AND: [SessionWhereInput!]
-  OR: [SessionWhereInput!]
-  NOT: [SessionWhereInput!]
-}
-
-input SessionWhereUniqueInput {
-  id: ID
-}
-
 type Subscription {
-  session(where: SessionSubscriptionWhereInput): SessionSubscriptionPayload
   segment(where: SegmentSubscriptionWhereInput): SegmentSubscriptionPayload
 }
 `

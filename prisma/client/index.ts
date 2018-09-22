@@ -9,7 +9,6 @@ type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
   U[keyof U];
 
 export interface Exists {
-  session: (where?: SessionWhereInput) => Promise<boolean>;
   segment: (where?: SegmentWhereInput) => Promise<boolean>;
 }
 
@@ -31,29 +30,6 @@ export interface Prisma {
    * Queries
    */
 
-  session: (where: SessionWhereUniqueInput) => Session;
-  sessions: (
-    args?: {
-      where?: SessionWhereInput;
-      orderBy?: SessionOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => Promise<Array<SessionNode>>;
-  sessionsConnection: (
-    args?: {
-      where?: SessionWhereInput;
-      orderBy?: SessionOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => SessionConnection;
   segment: (where: SegmentWhereUniqueInput) => Segment;
   segments: (
     args?: {
@@ -83,22 +59,6 @@ export interface Prisma {
    * Mutations
    */
 
-  createSession: (data: SessionCreateInput) => Session;
-  updateSession: (
-    args: { data: SessionUpdateInput; where: SessionWhereUniqueInput }
-  ) => Session;
-  updateManySessions: (
-    args: { data: SessionUpdateInput; where?: SessionWhereInput }
-  ) => BatchPayload;
-  upsertSession: (
-    args: {
-      where: SessionWhereUniqueInput;
-      create: SessionCreateInput;
-      update: SessionUpdateInput;
-    }
-  ) => Session;
-  deleteSession: (where: SessionWhereUniqueInput) => Session;
-  deleteManySessions: (where?: SessionWhereInput) => BatchPayload;
   createSegment: (data: SegmentCreateInput) => Segment;
   updateSegment: (
     args: { data: SegmentUpdateInput; where: SegmentWhereUniqueInput }
@@ -124,9 +84,6 @@ export interface Prisma {
 }
 
 export interface Subscription {
-  session: (
-    where?: SessionSubscriptionWhereInput
-  ) => SessionSubscriptionPayloadSubscription;
   segment: (
     where?: SegmentSubscriptionWhereInput
   ) => SegmentSubscriptionPayloadSubscription;
@@ -151,18 +108,10 @@ export type SegmentOrderByInput =
   | "startTime_DESC"
   | "endTime_ASC"
   | "endTime_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
-export type SessionOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "description_ASC"
-  | "description_DESC"
+  | "mastery_ASC"
+  | "mastery_DESC"
+  | "category_ASC"
+  | "category_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -170,115 +119,18 @@ export type SessionOrderByInput =
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
-export interface SegmentCreateManyWithoutSessionInput {
-  create?:
-    | SegmentCreateWithoutSessionInput[]
-    | SegmentCreateWithoutSessionInput;
-  connect?: SegmentWhereUniqueInput[] | SegmentWhereUniqueInput;
-}
-
-export type SessionWhereUniqueInput = AtLeastOne<{
-  id?: ID_Input;
-}>;
-
-export type SegmentWhereUniqueInput = AtLeastOne<{
-  id?: ID_Input;
-}>;
-
-export interface SessionWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  name?: String;
-  name_not?: String;
-  name_in?: String[] | String;
-  name_not_in?: String[] | String;
-  name_lt?: String;
-  name_lte?: String;
-  name_gt?: String;
-  name_gte?: String;
-  name_contains?: String;
-  name_not_contains?: String;
-  name_starts_with?: String;
-  name_not_starts_with?: String;
-  name_ends_with?: String;
-  name_not_ends_with?: String;
-  description?: String;
-  description_not?: String;
-  description_in?: String[] | String;
-  description_not_in?: String[] | String;
-  description_lt?: String;
-  description_lte?: String;
-  description_gt?: String;
-  description_gte?: String;
-  description_contains?: String;
-  description_not_contains?: String;
-  description_starts_with?: String;
-  description_not_starts_with?: String;
-  description_ends_with?: String;
-  description_not_ends_with?: String;
-  segments_every?: SegmentWhereInput;
-  segments_some?: SegmentWhereInput;
-  segments_none?: SegmentWhereInput;
-  createdAt?: DateTimeInput;
-  createdAt_not?: DateTimeInput;
-  createdAt_in?: DateTimeInput[] | DateTimeInput;
-  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
-  createdAt_lt?: DateTimeInput;
-  createdAt_lte?: DateTimeInput;
-  createdAt_gt?: DateTimeInput;
-  createdAt_gte?: DateTimeInput;
-  updatedAt?: DateTimeInput;
-  updatedAt_not?: DateTimeInput;
-  updatedAt_in?: DateTimeInput[] | DateTimeInput;
-  updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
-  updatedAt_lt?: DateTimeInput;
-  updatedAt_lte?: DateTimeInput;
-  updatedAt_gt?: DateTimeInput;
-  updatedAt_gte?: DateTimeInput;
-  AND?: SessionWhereInput[] | SessionWhereInput;
-  OR?: SessionWhereInput[] | SessionWhereInput;
-  NOT?: SessionWhereInput[] | SessionWhereInput;
-}
-
 export interface SegmentCreateInput {
   name: String;
   videoId: String;
   startTime: Int;
   endTime: Int;
-  session: SessionCreateOneWithoutSegmentsInput;
+  mastery?: Int;
+  category?: String;
+  tags?: SegmentCreatetagsInput;
 }
 
-export interface SegmentUpdateManyWithoutSessionInput {
-  create?:
-    | SegmentCreateWithoutSessionInput[]
-    | SegmentCreateWithoutSessionInput;
-  delete?: SegmentWhereUniqueInput[] | SegmentWhereUniqueInput;
-  connect?: SegmentWhereUniqueInput[] | SegmentWhereUniqueInput;
-  disconnect?: SegmentWhereUniqueInput[] | SegmentWhereUniqueInput;
-  update?:
-    | SegmentUpdateWithWhereUniqueWithoutSessionInput[]
-    | SegmentUpdateWithWhereUniqueWithoutSessionInput;
-  upsert?:
-    | SegmentUpsertWithWhereUniqueWithoutSessionInput[]
-    | SegmentUpsertWithWhereUniqueWithoutSessionInput;
-}
-
-export interface SegmentUpsertWithWhereUniqueWithoutSessionInput {
-  where: SegmentWhereUniqueInput;
-  update: SegmentUpdateWithoutSessionDataInput;
-  create: SegmentCreateWithoutSessionInput;
+export interface SegmentCreatetagsInput {
+  set?: String[] | String;
 }
 
 export interface SegmentWhereInput {
@@ -340,7 +192,28 @@ export interface SegmentWhereInput {
   endTime_lte?: Int;
   endTime_gt?: Int;
   endTime_gte?: Int;
-  session?: SessionWhereInput;
+  mastery?: Int;
+  mastery_not?: Int;
+  mastery_in?: Int[] | Int;
+  mastery_not_in?: Int[] | Int;
+  mastery_lt?: Int;
+  mastery_lte?: Int;
+  mastery_gt?: Int;
+  mastery_gte?: Int;
+  category?: String;
+  category_not?: String;
+  category_in?: String[] | String;
+  category_not_in?: String[] | String;
+  category_lt?: String;
+  category_lte?: String;
+  category_gt?: String;
+  category_gte?: String;
+  category_contains?: String;
+  category_not_contains?: String;
+  category_starts_with?: String;
+  category_not_starts_with?: String;
+  category_ends_with?: String;
+  category_not_ends_with?: String;
   createdAt?: DateTimeInput;
   createdAt_not?: DateTimeInput;
   createdAt_in?: DateTimeInput[] | DateTimeInput;
@@ -362,82 +235,18 @@ export interface SegmentWhereInput {
   NOT?: SegmentWhereInput[] | SegmentWhereInput;
 }
 
-export interface SegmentUpdateWithoutSessionDataInput {
-  name?: String;
-  videoId?: String;
-  startTime?: Int;
-  endTime?: Int;
-}
-
-export interface SessionUpsertWithoutSegmentsInput {
-  update: SessionUpdateWithoutSegmentsDataInput;
-  create: SessionCreateWithoutSegmentsInput;
-}
-
-export interface SessionUpdateOneWithoutSegmentsInput {
-  create?: SessionCreateWithoutSegmentsInput;
-  update?: SessionUpdateWithoutSegmentsDataInput;
-  upsert?: SessionUpsertWithoutSegmentsInput;
-  delete?: Boolean;
-  connect?: SessionWhereUniqueInput;
-}
-
-export interface SessionCreateWithoutSegmentsInput {
-  name?: String;
-  description?: String;
-}
-
-export interface SessionUpdateInput {
-  name?: String;
-  description?: String;
-  segments?: SegmentUpdateManyWithoutSessionInput;
-}
-
-export interface SegmentCreateWithoutSessionInput {
-  name: String;
-  videoId: String;
-  startTime: Int;
-  endTime: Int;
-}
-
-export interface SegmentUpdateWithWhereUniqueWithoutSessionInput {
-  where: SegmentWhereUniqueInput;
-  data: SegmentUpdateWithoutSessionDataInput;
-}
-
-export interface SessionCreateInput {
-  name?: String;
-  description?: String;
-  segments?: SegmentCreateManyWithoutSessionInput;
-}
-
-export interface SessionCreateOneWithoutSegmentsInput {
-  create?: SessionCreateWithoutSegmentsInput;
-  connect?: SessionWhereUniqueInput;
-}
-
 export interface SegmentUpdateInput {
   name?: String;
   videoId?: String;
   startTime?: Int;
   endTime?: Int;
-  session?: SessionUpdateOneWithoutSegmentsInput;
+  mastery?: Int;
+  category?: String;
+  tags?: SegmentUpdatetagsInput;
 }
 
-export interface SessionUpdateWithoutSegmentsDataInput {
-  name?: String;
-  description?: String;
-}
-
-export interface SessionSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: SessionWhereInput;
-  AND?: SessionSubscriptionWhereInput[] | SessionSubscriptionWhereInput;
-  OR?: SessionSubscriptionWhereInput[] | SessionSubscriptionWhereInput;
-  NOT?: SessionSubscriptionWhereInput[] | SessionSubscriptionWhereInput;
+export interface SegmentUpdatetagsInput {
+  set?: String[] | String;
 }
 
 export interface SegmentSubscriptionWhereInput {
@@ -451,8 +260,28 @@ export interface SegmentSubscriptionWhereInput {
   NOT?: SegmentSubscriptionWhereInput[] | SegmentSubscriptionWhereInput;
 }
 
+export type SegmentWhereUniqueInput = AtLeastOne<{
+  id?: ID_Input;
+}>;
+
 export interface NodeNode {
   id: ID_Output;
+}
+
+export interface AggregateSegmentNode {
+  count: Int;
+}
+
+export interface AggregateSegment
+  extends Promise<AggregateSegmentNode>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateSegmentSubscription
+  extends Promise<AsyncIterator<AggregateSegmentNode>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface SegmentPreviousValuesNode {
@@ -461,6 +290,9 @@ export interface SegmentPreviousValuesNode {
   videoId: String;
   startTime: Int;
   endTime: Int;
+  mastery?: Int;
+  category?: String;
+  tags: String[];
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -473,6 +305,9 @@ export interface SegmentPreviousValues
   videoId: () => Promise<String>;
   startTime: () => Promise<Int>;
   endTime: () => Promise<Int>;
+  mastery: () => Promise<Int>;
+  category: () => Promise<String>;
+  tags: () => Promise<String[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -485,100 +320,27 @@ export interface SegmentPreviousValuesSubscription
   videoId: () => Promise<AsyncIterator<String>>;
   startTime: () => Promise<AsyncIterator<Int>>;
   endTime: () => Promise<AsyncIterator<Int>>;
+  mastery: () => Promise<AsyncIterator<Int>>;
+  category: () => Promise<AsyncIterator<String>>;
+  tags: () => Promise<AsyncIterator<String[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface SessionEdgeNode {
+export interface SegmentEdgeNode {
   cursor: String;
 }
 
-export interface SessionEdge extends Promise<SessionEdgeNode>, Fragmentable {
-  node: <T = Session>() => T;
+export interface SegmentEdge extends Promise<SegmentEdgeNode>, Fragmentable {
+  node: <T = Segment>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface SessionEdgeSubscription
-  extends Promise<AsyncIterator<SessionEdgeNode>>,
+export interface SegmentEdgeSubscription
+  extends Promise<AsyncIterator<SegmentEdgeNode>>,
     Fragmentable {
-  node: <T = SessionSubscription>() => T;
+  node: <T = SegmentSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface SessionNode {
-  id: ID_Output;
-  name: String;
-  description: String;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface Session extends Promise<SessionNode>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  description: () => Promise<String>;
-  segments: <T = Promise<Array<SegmentNode>>>(
-    args?: {
-      where?: SegmentWhereInput;
-      orderBy?: SegmentOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface SessionSubscription
-  extends Promise<AsyncIterator<SessionNode>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  description: () => Promise<AsyncIterator<String>>;
-  segments: <T = Promise<AsyncIterator<Array<SegmentSubscription>>>>(
-    args?: {
-      where?: SegmentWhereInput;
-      orderBy?: SegmentOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface SessionPreviousValuesNode {
-  id: ID_Output;
-  name: String;
-  description: String;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface SessionPreviousValues
-  extends Promise<SessionPreviousValuesNode>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  description: () => Promise<String>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface SessionPreviousValuesSubscription
-  extends Promise<AsyncIterator<SessionPreviousValuesNode>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  description: () => Promise<AsyncIterator<String>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface PageInfoNode {
@@ -604,26 +366,15 @@ export interface PageInfoSubscription
   endCursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface BatchPayloadNode {
-  count: Long;
-}
-
-export interface BatchPayload extends Promise<BatchPayloadNode>, Fragmentable {
-  count: () => Promise<Long>;
-}
-
-export interface BatchPayloadSubscription
-  extends Promise<AsyncIterator<BatchPayloadNode>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Long>>;
-}
-
 export interface SegmentNode {
   id: ID_Output;
   name: String;
   videoId: String;
   startTime: Int;
   endTime: Int;
+  mastery?: Int;
+  category?: String;
+  tags: String[];
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -634,7 +385,9 @@ export interface Segment extends Promise<SegmentNode>, Fragmentable {
   videoId: () => Promise<String>;
   startTime: () => Promise<Int>;
   endTime: () => Promise<Int>;
-  session: <T = Session>() => T;
+  mastery: () => Promise<Int>;
+  category: () => Promise<String>;
+  tags: () => Promise<String[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -647,66 +400,11 @@ export interface SegmentSubscription
   videoId: () => Promise<AsyncIterator<String>>;
   startTime: () => Promise<AsyncIterator<Int>>;
   endTime: () => Promise<AsyncIterator<Int>>;
-  session: <T = SessionSubscription>() => T;
+  mastery: () => Promise<AsyncIterator<Int>>;
+  category: () => Promise<AsyncIterator<String>>;
+  tags: () => Promise<AsyncIterator<String[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface SessionSubscriptionPayloadNode {
-  mutation: MutationType;
-  updatedFields?: String[];
-}
-
-export interface SessionSubscriptionPayload
-  extends Promise<SessionSubscriptionPayloadNode>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = Session>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = SessionPreviousValues>() => T;
-}
-
-export interface SessionSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<SessionSubscriptionPayloadNode>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = SessionSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = SessionPreviousValuesSubscription>() => T;
-}
-
-export interface SessionConnectionNode {}
-
-export interface SessionConnection
-  extends Promise<SessionConnectionNode>,
-    Fragmentable {
-  pageInfo: <T = PageInfo>() => T;
-  edges: <T = Promise<Array<SessionEdgeNode>>>() => T;
-  aggregate: <T = AggregateSession>() => T;
-}
-
-export interface SessionConnectionSubscription
-  extends Promise<AsyncIterator<SessionConnectionNode>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<Array<SessionEdgeSubscription>>>>() => T;
-  aggregate: <T = AggregateSessionSubscription>() => T;
-}
-
-export interface AggregateSegmentNode {
-  count: Int;
-}
-
-export interface AggregateSegment
-  extends Promise<AggregateSegmentNode>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateSegmentSubscription
-  extends Promise<AsyncIterator<AggregateSegmentNode>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface SegmentSubscriptionPayloadNode {
@@ -732,38 +430,6 @@ export interface SegmentSubscriptionPayloadSubscription
   previousValues: <T = SegmentPreviousValuesSubscription>() => T;
 }
 
-export interface SegmentEdgeNode {
-  cursor: String;
-}
-
-export interface SegmentEdge extends Promise<SegmentEdgeNode>, Fragmentable {
-  node: <T = Segment>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface SegmentEdgeSubscription
-  extends Promise<AsyncIterator<SegmentEdgeNode>>,
-    Fragmentable {
-  node: <T = SegmentSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateSessionNode {
-  count: Int;
-}
-
-export interface AggregateSession
-  extends Promise<AggregateSessionNode>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateSessionSubscription
-  extends Promise<AsyncIterator<AggregateSessionNode>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
 export interface SegmentConnectionNode {}
 
 export interface SegmentConnection
@@ -782,18 +448,29 @@ export interface SegmentConnectionSubscription
   aggregate: <T = AggregateSegmentSubscription>() => T;
 }
 
+export interface BatchPayloadNode {
+  count: Long;
+}
+
+export interface BatchPayload extends Promise<BatchPayloadNode>, Fragmentable {
+  count: () => Promise<Long>;
+}
+
+export interface BatchPayloadSubscription
+  extends Promise<AsyncIterator<BatchPayloadNode>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Long>>;
+}
+
 /*
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
 */
 export type Int = number;
 
 /*
-The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
+The `Boolean` scalar type represents `true` or `false`.
 */
-export type ID_Input = string | number;
-export type ID_Output = string;
-
-export type Long = string;
+export type Boolean = boolean;
 
 /*
 DateTime scalar input type, allowing Date
@@ -806,14 +483,17 @@ DateTime scalar output type, which is always a string
 export type DateTimeOutput = string;
 
 /*
-The `Boolean` scalar type represents `true` or `false`.
+The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
 */
-export type Boolean = boolean;
+export type ID_Input = string | number;
+export type ID_Output = string;
 
 /*
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 */
 export type String = string;
+
+export type Long = string;
 
 /**
  * Type Defs

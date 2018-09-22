@@ -2,55 +2,32 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
-const fs = require('fs')
-const { prisma } = require('./prisma/client')
+const { prisma } = require('./prisma/client');
 const { ApolloServer, gql } = require('apollo-server');
+const { importSchema } = require('graphql-import');
 
 // With Prisma Client Beta 1.17,
 // The generated Prisma Client v1.17 does not return relationship data by default, only scalar data.
-// In order to query relationships, we must use the $fragment method
+// In order to query relationships, use the $fragment method
 
-// This seems unnecessarily verbose, because Prisma already understand this relationship
-// I've asked this question in the following issue:
+// This seems verbose. Follow along in this issue:
 //   https://github.com/prisma/prisma/issues/3104
-
-const SessionWithSegmentRelationFragment = `
-  fragment SessionWithSegmentRelation on Session {
-    id
-    name
-    description
-    createdAt
-    updatedAt
-    segments {
-      id
-      name
-      videoId
-      startTime
-      endTime
-      createdAt
-      updatedAt
-    }
-  }
-`
 
 const resolvers = {
   Query: {
-    async session(root, args, context) {
-      return context.prisma.session({ id: args.id }).$fragment(SessionWithSegmentRelationFragment);
-    },
-    async sessions(root, args, context) {
-      return context.prisma.sessions().$fragment(SessionWithSegmentRelationFragment);
+    async segments(root, args, context) {
+      return context.prisma.segments();
     }
   },
   Mutation: {
-    async createSession(root, args, context) {
-      return context.prisma.createSession(args.data).$fragment(SessionWithSegmentRelationFragment)
+    async createSegment(root, args, context) {
+      return context.prisma.createSegment(args.data);
     },
   },
 }
 
 const server = new ApolloServer({
-  typeDefs: gql(fs.readFileSync('./schema.graphql', 'utf8')),
+  typeDefs: gql(importSchema('./schema.graphql')),
   resolvers,
   context: { 
     prisma
