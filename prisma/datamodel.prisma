@@ -3,22 +3,15 @@
 #   createdAt
 #   updatedAt
 
-type Session {
-  id: ID! @unique
-  name: String! @default(value: "New Session")
-  description: String! @default(value: "A nondescript dance session")
-  segments: [Segment!]! @relation(name: "SegmentsBySession", onDelete: CASCADE)
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type Segment {
   id: ID! @unique
   name: String!
   videoId: String!
   startTime: Int!
   endTime: Int!
-  session: Session! @relation(name: "SegmentsBySession")
+  mastery: Int # 0-5 - mastery of 0 expresses interest in wanting to learn the segment
+  category: String # balboa, swing, etc
+  tags: [String!]! # escape hatch for extra functionality
   createdAt: DateTime!
   updatedAt: DateTime!
 }

@@ -1,50 +1,9 @@
+# import Segment, SegmentWhereInput, SegmentOrderByInput, SegmentCreateInput from "prisma/prisma.graphql"
+
 type Query {
-  session(id: ID!): Session
-  sessions: [Session!]!
+  segments(where: SegmentWhereInput, orderBy: SegmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Segment]!
 }
 
 type Mutation {
-  createSession(data: SessionCreateInput!): Session
-}
-
-type Segment {
-  id: ID!
-  name: String!
-  videoId: String!
-  startTime: Int!
-  endTime: Int!
-  session: Session!
-  createdAt: String!
-  updatedAt: String!
-}
-
-type Session {
-  id: ID!
-  name: String!
-  description: String!
-  segments: [Segment!]
-  createdAt: String!
-  updatedAt: String!
-}
-
-input SessionCreateInput {
-  name: String
-  description: String
-  segments: SegmentCreateManyWithoutSessionInput
-}
-
-input SegmentCreateManyWithoutSessionInput {
-  create: [SegmentCreateWithoutSessionInput!]
-  connect: [SegmentWhereUniqueInput!]
-}
-
-input SegmentCreateWithoutSessionInput {
-  name: String!
-  videoId: String!
-  startTime: Int!
-  endTime: Int!
-}
-
-input SegmentWhereUniqueInput {
-  id: ID
+  createSegment(data: SegmentCreateInput!): Segment
 }
