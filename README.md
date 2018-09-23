@@ -16,6 +16,7 @@ Start prisma server locally and deploy schema
 ```
 cd prisma
 docker-compose up -d
+cd ..
 prisma deploy
 ```
 
@@ -32,7 +33,7 @@ If you commit changes to the Prisma Schema, you'll have to re-deploy the change 
 Update Prisma Schema
 
 ```
-prisma/datamodel.prisma 
+prisma/datamodel.prisma
 ```
 
 Deploy Prisma Server
