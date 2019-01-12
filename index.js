@@ -1,5 +1,5 @@
 if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
+    require('dotenv').config();
 }
 
 const { prisma } = require('./prisma/client');
@@ -14,30 +14,34 @@ const { importSchema } = require('graphql-import');
 //   https://github.com/prisma/prisma/issues/3104
 
 const resolvers = {
-  Query: {
-    async segments(root, args, context) {
-      return context.prisma.segments();
-    }
-  },
-  Mutation: {
-    async createSegment(root, args, context) {
-      return context.prisma.createSegment(args.data);
+    Query: {
+        async segments(root, args, context) {
+            return context.prisma.segments();
+        },
+        async session(root, args, context) {
+            return context.prisma.session({ id: args.id });
+        },
     },
-  },
-}
+    Mutation: {
+        async createSegment(root, args, context) {
+            return context.prisma.createSegment(args.data);
+        },
+        async createSession(root, args, context) {
+            return context.prisma.createSession(args.data);
+        },
+    },
+};
 
 const server = new ApolloServer({
-  typeDefs: gql(importSchema('./schema.graphql')),
-  resolvers,
-  context: { 
-    prisma
-  },
-  introspection: true
-})
+    typeDefs: gql(importSchema('./schema.graphql')),
+    resolvers,
+    context: {
+        prisma,
+    },
+    introspection: true,
+});
 
-
-server.listen({ port: process.env.PORT || 4000 })
-  .then(({ url }) => {
+server.listen({ port: process.env.PORT || 4000 }).then(({ url }) => {
     console.log(`🚀  Server ready at ${url}`);
     console.log(`🚀  Prisma ready at ${process.env.PRISMA_ENDPOINT}`);
-  })
+});

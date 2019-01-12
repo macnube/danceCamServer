@@ -1,9 +1,19 @@
-# import Segment, SegmentWhereInput, SegmentOrderByInput, SegmentCreateInput from "prisma/prisma.graphql"
+# import Segment, Session, SessionCreateInput, SegmentWhereInput, SegmentOrderByInput, SegmentCreateInput from "prisma/prisma.graphql"
 
 type Query {
-  segments(where: SegmentWhereInput, orderBy: SegmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Segment]!
+    segments(
+        where: SegmentWhereInput
+        orderBy: SegmentOrderByInput
+        skip: Int
+        after: String
+        before: String
+        first: Int
+        last: Int
+    ): [Segment]!
+    session(id: ID!): Session
 }
 
 type Mutation {
-  createSegment(data: SegmentCreateInput!): Segment
+    createSegment(data: SegmentCreateInput!): Segment
+    createSession(data: SessionCreateInput!): Session
 }

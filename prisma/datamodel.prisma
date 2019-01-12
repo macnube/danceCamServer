@@ -3,6 +3,14 @@
 #   createdAt
 #   updatedAt
 
+type Session {
+  id: ID! @unique
+  segments: [Segment!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+
 type Segment {
   id: ID! @unique
   name: String!
